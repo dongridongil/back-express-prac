@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const kakaoPassport = require("./passport/kakaoStrategy");
 const naverPassport = require("./passport/naverStrategy");
+
 const indexRouter = require("./routes/index");
 
 const app = express();
@@ -22,12 +23,22 @@ sequelize
     console.log(`데이터베이스 연결 실패 ${error}`);
   });
 
+// view engine setup
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
+const corsOption = {
+  origin: true,
+  credentials: true,
+};
+
+app.use(cors(corsOption));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cors({ origin: ["http://localhost:3000", "http://54.180.97.255"], credentials: true }));
+
 app.use("/", indexRouter);
 
 // catch 404 and forward to error handler
